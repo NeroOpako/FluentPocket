@@ -1,0 +1,46 @@
+﻿<ContentDialog
+    x:Class="FluentPocket.Views.Dialog.ImageDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FluentPocket.Views.Dialog"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="Transparent"
+    BorderBrush="Transparent"
+    RequestedTheme="Dark"
+    mc:Ignorable="d">
+    <ContentDialog.Resources>
+        <Thickness x:Key="ContentDialogPadding">0,0,0,0</Thickness>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+        </Style>
+    </ContentDialog.Resources>
+    <Grid>
+        <controls:ImageEx
+            Margin="16"
+            HorizontalAlignment="Stretch"
+            Source="{x:Bind Uri}"
+            Tapped="ImageTapped" />
+        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Orientation="Horizontal"
+            Spacing="8">
+            <!--  Save  -->
+            <Button
+                Width="52"
+                Background="DeepSkyBlue"
+                Click="AppBar_Click"
+                Content=""
+                Tag="Save" />
+            <!--  Share  -->
+            <Button
+                Width="52"
+                Background="DarkOrange"
+                Click="AppBar_Click"
+                Content=""
+                Tag="Share" />
+        </StackPanel>
+    </Grid>
+</ContentDialog>

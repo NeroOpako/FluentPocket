@@ -1,0 +1,53 @@
+﻿<Page
+    x:Class="FluentPocket.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FluentPocket.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource BlackAcrylicBackgroundBrush60}"
+    mc:Ignorable="d">
+
+    <controls:DropShadowPanel
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        BlurRadius="35"
+        RequestedTheme="Dark">
+        <StackPanel
+            Padding="36"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="#111"
+            CornerRadius="36">
+            <Image
+                Width="84"
+                Height="84"
+                Source="ms-appx:///Assets/Icons/Logo.png" />
+            <RichTextBlock
+                Margin="16"
+                IsTextSelectionEnabled="False"
+                Style="{ThemeResource BodyRichTextBlockStyle}"
+                TextAlignment="Center">
+                <Paragraph FontWeight="Bold">
+                    FluentPocket
+                </Paragraph>
+                <Paragraph>
+                    Unofficial UWP Pocket Client
+                </Paragraph>
+            </RichTextBlock>
+            <Button
+                Width="142"
+                Height="42"
+                HorizontalAlignment="Center"
+                Background="{ThemeResource SystemAccentColor}"
+                Click="Login_Clicked"
+                Content="LOGIN"
+                CornerRadius="16"
+                FontFamily="Calibri"
+                FontSize="18"
+                FontWeight="Bold"
+                Foreground="White" />
+        </StackPanel>
+    </controls:DropShadowPanel>
+</Page>
