@@ -362,5 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-PocketX/Package.StoreAssociation.xml
-PocketX/Handlers/Keys.cs
+FluentPocket/Package.StoreAssociation.xml
+FluentPocket/Handlers/Keys.cs
