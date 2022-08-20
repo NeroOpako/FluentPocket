@@ -8,8 +8,8 @@ You can only:
 -View your Saved, Archived, Favorited items  
 -Edit tags  
 -Add Items with tags  
--Search for items and tags 
--Share to the app to create an item  
+-Search for items and tags  
+-Share to the app to create an item   
   
 There are a couple of fixes I need to implement, but I consider the app feature complete.  
   
