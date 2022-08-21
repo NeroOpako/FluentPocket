@@ -7,14 +7,13 @@ The app has been updated to reflect the new Win 11 UI.
  ![image](https://user-images.githubusercontent.com/94486376/185762873-2dceabe3-04f2-42a4-acaa-45faf4b9ffad.png)
 
 You can only:  
--View your Saved, Archived, Favorited items  
--Edit tags  
--Add Items with tags  
+-View and edit your Saved, Archived, Favorited items  
+-Add / Edit tags  
 -Search for items and tags  
--Share to the app to create an item   
+-Share to the app and outside the app   
   
 There are a couple of fixes I need to implement, but I consider the app feature complete.  
   
-Feel free to fork it and use it as you wish, and please donate to the original developer https://github.com/yazdipour/ which did a fantastic job.  
+Feel free to fork it and use it as you wish, and please donate to the original developer https://github.com/yazdipour/ who did a fantastic job.  
   
 To instructions on how to build the app, please follow PocketX's readme file.  
