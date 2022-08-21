@@ -115,7 +115,6 @@
     <Compile Include="Converter\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converter\HideIfEmptyConverter.cs" />
     <Compile Include="Handlers\Keys.cs" />
-    <Compile Include="Handlers\NotificationHandler.cs" />
     <Compile Include="Handlers\PocketHandler.cs" />
     <Compile Include="Handlers\PocketIncrementalSource.cs" />
     <Compile Include="Handlers\SimpleCommand.cs" />

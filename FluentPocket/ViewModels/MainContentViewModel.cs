@@ -107,25 +107,21 @@ namespace FluentPocket.ViewModels
             if (((AddDialog)sender?.Content).PocketItem == null) return;
             ArticlesList.Insert(0, ((AddDialog)sender?.Content).PocketItem);
             await PocketHandler.PutItemInCache(0, ((AddDialog)sender?.Content).PocketItem);
-            RefreshArticles.Execute(null);
-        }
-
-        internal void ShareArticle(DataTransferManager sender, DataRequestedEventArgs args)
-        {
-            var request = args.Request;
-            request.Data.SetText(PocketHandler?.CurrentPocketItem?.Uri?.ToString() ?? "");
-            request.Data.Properties.Title = "Shared by FluentPocket";
         }
 
         public async Task ToggleArchiveArticleAsync(PocketItem pocketItem, bool isArchive)
         {
             if (pocketItem == null) return;
+            if (!Utils.HasInternet)
+            {
+                await UiUtils.ShowDialogAsync("You need to connect to the internet first");
+                return;
+            }
             try
             {
                 if (isArchive) // Want to add
                 {
                     await PocketHandler.Client.Unarchive(pocketItem);
-                    NotificationHandler.InAppNotification("Added", 2000);
                     if (ArticlesList.Count > 0 && ArticlesList[0] != pocketItem) ArticlesList.Insert(0, pocketItem);
                     ArchivesList.Remove(pocketItem);
                 }
@@ -134,10 +130,9 @@ namespace FluentPocket.ViewModels
                     await PocketHandler.ArchiveArticle(pocketItem);
                     if (ArchivesList.Count > 0 && ArchivesList[0] != pocketItem) ArchivesList.Insert(0, pocketItem);
                     ArticlesList.Remove(pocketItem);
-                    NotificationHandler.InAppNotification("Archived", 2000);
                 }
             }
-            catch (Exception e) { NotificationHandler.InAppNotification(e.Message, 2000); }
+            catch (Exception e) { }
         }
 
         public async Task DeleteArticleAsync(PocketItem pocketItem)
@@ -145,23 +140,25 @@ namespace FluentPocket.ViewModels
             if (pocketItem == null) return;
             await PocketHandler.DeleteArticle(pocketItem);
             CurrentList()?.Remove(pocketItem);
-            NotificationHandler.InAppNotification("Deleted", 2000);
         }
 
         public async Task ToggleFavoriteArticleAsync(PocketItem pocketItem)
         {
             if (pocketItem == null) return;
+            if (!Utils.HasInternet)
+            {
+                await UiUtils.ShowDialogAsync("You need to connect to the internet first");
+                return;
+            }
             if (pocketItem.IsFavorite)
             {
                 await PocketHandler.GetInstance().Client.Unfavorite(pocketItem);
                 if (FavoritesList.Count != 0) FavoritesList.Remove(pocketItem);
-                NotificationHandler.InAppNotification("Remove from Favorite", 2000);
             }
             else
             {
                 await PocketHandler.GetInstance().Client.Favorite(pocketItem);
                 if (FavoritesList.Count != 0) FavoritesList.Add(pocketItem);
-                NotificationHandler.InAppNotification("Saved as Favorite", 2000);
             }
         }
 
@@ -182,7 +179,7 @@ namespace FluentPocket.ViewModels
                 await ToggleFavoriteArticleAsync(item);
                 item.IsFavorite = !item.IsFavorite;
                 OnPropertyChanged(nameof(item));
-                RefreshArticles.Execute(item);
+                RefreshArticles.Execute(NavigationSelectedItem.Tag);
             };
             flyout?.Items?.Add(el);
             el = new MenuFlyoutItem { Text = "Share", Icon = new SymbolIcon(Symbol.Share) };
@@ -219,14 +216,13 @@ namespace FluentPocket.ViewModels
             el.Click += (sen, ee) =>
             {
                 Utils.CopyToClipboard(item?.Uri?.AbsoluteUri);
-                NotificationHandler.InAppNotification("Copied", 2000);
             };
             flyout?.Items?.Add(el);
             el = new MenuFlyoutItem { Text = "Delete", Icon = new SymbolIcon(Symbol.Delete) };
             el.Click += async (sen, ee) =>
             {
                 await DeleteArticleAsync(item);
-                RefreshArticles.Execute(item);
+                RefreshArticles.Execute(NavigationSelectedItem.Tag);
             };
             flyout?.Items?.Add(el);
             el = new MenuFlyoutItem
@@ -237,10 +233,20 @@ namespace FluentPocket.ViewModels
             el.Click += async (sen, ee) =>
             {
                 await ToggleArchiveArticleAsync(item, item.IsArchive);
-                RefreshArticles.Execute(item);
+                RefreshArticles.Execute(NavigationSelectedItem.Tag);
             };
                 flyout?.Items?.Insert(0, el);
             if (sender is Button parent) flyout.ShowAt(parent, e.GetPosition(parent));
+        }
+
+        public void RefreshArticlesTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            RefreshArticles.Execute("5");
+        }
+
+        public void AddArticleTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            AddArticle.Execute(NavigationSelectedItem.Tag);
         }
 
         internal ICommand RefreshArticles =>
@@ -251,9 +257,11 @@ namespace FluentPocket.ViewModels
                    await UiUtils.ShowDialogAsync("You need to connect to the internet first");
                    return;
                }
-               await ArticlesList.RefreshAsync();
-               await ArchivesList.RefreshAsync();
-               await FavoritesList.RefreshAsync();
+               var tag = (string) param;
+
+               if(tag != "0") await ArticlesList.RefreshAsync();
+               if (tag != "1") await FavoritesList.RefreshAsync();
+               if (tag != "2") await ArchivesList.RefreshAsync();
                SearchList.Clear();
            }));
     }

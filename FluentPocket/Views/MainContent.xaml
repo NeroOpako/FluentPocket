@@ -46,10 +46,11 @@
                                 Style="{ThemeResource CaptionTextBlockStyle}"
                                 Text="{x:Bind Uri.Host}" />
                             <TextBlock
+                                HorizontalAlignment="Left"
                                 Width="220"
                                 x:Phase="11"
                                 FontSize="11"
-                                Foreground="{ThemeResource SystemAccentColor}"
+                                Foreground="{ThemeResource SystemAccentColorLight3}"
                                 Text="{x:Bind converter:ArrayToStringConverter.ConvertTagsToString(Tags)}"
                                 TextTrimming="WordEllipsis"
                                 Visibility="{x:Bind Tags, Converter={StaticResource HideIfEmpty}}" />
@@ -107,12 +108,12 @@
                     </NavigationViewItem>
                 </NavigationView.MenuItems>
                 <NavigationView.AutoSuggestBox >
-                    <AutoSuggestBox x:Name="SearchBox" Grid.Row="0" Width="192" IsEnabled="True" PlaceholderText="Search" QueryIcon="Find" QuerySubmitted="AutoSuggestBox_OnQuerySubmitted"/>
+                    <AutoSuggestBox x:Name="SearchBox" Grid.Row="0" Width="160" IsEnabled="True" PlaceholderText="Search" QueryIcon="Find" QuerySubmitted="AutoSuggestBox_OnQuerySubmitted"/>
                 </NavigationView.AutoSuggestBox>
                 <NavigationView.PaneFooter>
                     <StackPanel Orientation="Horizontal">
-                        <AppBarButton Width="40" Command="{x:Bind _vm.AddArticle}" Icon="Add" />
-                        <AppBarButton Width="40" Command="{x:Bind _vm.RefreshArticles}" Icon="Refresh" />
+                        <AppBarButton Width="40" Tapped="AddArticleTapped" Icon="Add" />
+                        <AppBarButton Width="40" Tapped="RefreshArticlesTapped" Icon="Refresh" />
                         <Button Margin="2,0,12,0" Height="36" BorderThickness="0" Background="Transparent" Visibility="{x:Bind User, Converter={StaticResource HideIfEmpty}}" >
                             <Button.Content>
                                 <PersonPicture Grid.Column="0" Margin="-5" Height="26" Width="26" ProfilePicture="{x:Bind User.Avatar.AbsoluteUri}" />
@@ -122,6 +123,9 @@
                                     <MenuFlyoutItem IsEnabled="False" Text="{x:Bind User.Email}"/>
                                     <MenuFlyoutItem Click="Logout_Click" Text="Logout"/>
                                     <MenuFlyoutItem Click="ClearCache_Click" Text="Clear cache"/>
+                                    <MenuFlyoutSeparator/>
+                                    <MenuFlyoutItem IsEnabled="False" Text="{x:Bind _versionString}"/>
+                                    <MenuFlyoutItem Click="DevPageFlyoutItem_Click" Text="Developer page"/>
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
@@ -147,15 +151,21 @@
                     <TextBlock VerticalAlignment="Center" Text="Loading your pocket" />
                 </StackPanel>
             </controls:Loading>
-            <!--  InAppNotification  -->
-            <controls:InAppNotification
-                    x:Name="InAppNotifier"
-                    Grid.Row="1"
-                    Margin="2,8"
-                    AnimationDuration="00:00:00.1000000"
-                    Content="Error!"
-                    HorizontalOffset="0"
-                    RequestedTheme="Dark" />
+            <muxc:InfoBar
+                Grid.Row="1"
+                Margin="10,10,10,10"
+                VerticalAlignment="Bottom"
+                x:Name="ErrorBar"
+                IsOpen="False"
+                Severity="Error"
+                Title="Error"
+                Message="To continue you need to connect to the internet">
+                <muxc:InfoBar.Transitions>
+                    <TransitionCollection>
+                        <EdgeUIThemeTransition Edge="Bottom"/>
+                    </TransitionCollection>
+                </muxc:InfoBar.Transitions>
+            </muxc:InfoBar>
         </Grid>
     </Grid>
 </Page>

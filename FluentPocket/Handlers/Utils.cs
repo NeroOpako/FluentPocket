@@ -15,42 +15,6 @@ namespace FluentPocket.Handlers
 
         internal static bool HasInternet => Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable;
 
-        internal static async Task DownloadFile(string url, string name, StorageFolder folder)
-        {
-            try
-            {
-                if (folder == null)
-                {
-                    var picker = new FolderPicker
-                    {
-                        ViewMode = PickerViewMode.Thumbnail,
-                        SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-                        FileTypeFilter = { "*" }
-                    };
-                    folder = await picker.PickSingleFolderAsync();
-                }
-                CancellationToken token;
-                if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out Uri source))
-                    throw new Exception("Invalid URI");
-                var destinationFile = await folder.CreateFileAsync(name, CreationCollisionOption.GenerateUniqueName);
-                var download = new BackgroundDownloader().CreateDownload(source, destinationFile);
-                download.Priority = BackgroundTransferPriority.High;
-                await download.StartAsync().AsTask(token);
-            }
-            catch (Exception e) { throw e; }
-        }
-
-        internal static System.Collections.Generic.List<string> GetAllFonts()
-        {
-            var fonts = Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies();
-            var fontList = new System.Collections.Generic.List<string>(fonts);
-            fontList.Insert(0, "Segoe UI");
-            fontList.Insert(0, "Times New Roman");
-            fontList.Insert(0, "Arial");
-            fontList.Insert(0, "Calibri");
-            return fontList;
-        }
-
         internal static void CopyToClipboard(string text)
         {
             var pkg = new Windows.ApplicationModel.DataTransfer.DataPackage();
@@ -72,11 +36,6 @@ namespace FluentPocket.Handlers
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
-        internal static async Task<string> TextFromAssets(string path)
-        {
-            var sFile = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(path);
-            return FileIO.ReadTextAsync(sFile).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
-        }
     }
 
 }

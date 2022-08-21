@@ -21,9 +21,7 @@ namespace FluentPocket.Views.Dialog
             if (PrimaryBtnText != "Save") return;
             UrlTextBox.Visibility = Visibility.Collapsed;
             if (PocketHandler?.CurrentPocketItem?.Tags == null) return;
-           // foreach (var tag in PocketHandler.CurrentPocketItem.Tags) sl.Add(tag.Name);
             ChipsList.SelectedChips = PocketHandler.CurrentPocketItem.Tags.Select(t => t.Name);
-            Bindings.Update();
         }
 
         public async void ContentDialog_PrimaryButtonClick(object sender, ContentDialogButtonClickEventArgs args)
@@ -35,7 +33,6 @@ namespace FluentPocket.Views.Dialog
                       if (!await PocketHandler.Client.ReplaceTags(PocketHandler.CurrentPocketItem, ChipsList.SelectedChips.ToArray())
                           .ConfigureAwait(true))
                           return;
-                      NotificationHandler.InAppNotification("Tags get updated", 2000);
                       PocketHandler.CurrentPocketItem.Tags =
                           ChipsList.SelectedChips.Select(chip => new PocketTag { Name = chip });
                   }
