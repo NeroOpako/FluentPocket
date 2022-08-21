@@ -16,4 +16,4 @@ There are a couple of fixes I need to implement, but I consider the app feature 
   
 Feel free to fork it and use it as you wish, and please donate to the original developer https://github.com/yazdipour/ who did a fantastic job.  
   
-To instructions on how to build the app, please follow PocketX's readme file.  
+For instructions on how to build the app, please follow PocketX's readme file.  
