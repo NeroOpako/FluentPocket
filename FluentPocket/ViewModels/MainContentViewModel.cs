@@ -188,11 +188,12 @@ namespace FluentPocket.ViewModels
             el = new MenuFlyoutItem { Text = "Share", Icon = new SymbolIcon(Symbol.Share) };
             el.Click += (sen, ee) =>
             {
-                DataTransferManager.GetForCurrentView().DataRequested += (s, args) =>
+                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+                dataTransferManager.DataRequested += (s, args) =>
                 {
                     var request = args.Request;
-                    request.Data.SetText(item?.Uri.AbsoluteUri.ToString() ?? "");
-                    request.Data.Properties.Title = "Shared by FluentPocket";
+                    request.Data.SetWebLink(new Uri(item.Uri.AbsoluteUri));
+                    request.Data.Properties.Title = "Share an article";
                 };
                 DataTransferManager.ShowShareUI();
             };
