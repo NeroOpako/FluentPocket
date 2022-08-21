@@ -59,7 +59,6 @@ namespace FluentPocket.Handlers
             Client = null;
             User = null;
             _pocketHandler = null;
-            SettingsHandler.Clear();
             Cache.Kill();
             _localCache.Save(Keys.PocketClientCache, "");
             _localCacheComplex.Save(Keys.PocketClientCache + "user", "");

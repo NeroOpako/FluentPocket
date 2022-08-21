@@ -12,7 +12,6 @@ using Windows.UI.Xaml.Controls;
 using Microsoft.Toolkit.Uwp;
 using PocketSharp.Models;
 using FluentPocket.Handlers;
-using FluentPocket.Models;
 using FluentPocket.Views.Dialog;
 using ReadSharp;
 using Windows.Foundation;
@@ -30,7 +29,6 @@ namespace FluentPocket.ViewModels
         public readonly IncrementalLoadingCollection<PocketIncrementalSource.Favorites, PocketItem> FavoritesList
             = new IncrementalLoadingCollection<PocketIncrementalSource.Favorites, PocketItem>();
         public ObservableCollection<PocketItem> SearchList = new ObservableCollection<PocketItem>();
-        internal Settings Settings => SettingsHandler.Settings;
         internal PocketHandler PocketHandler => PocketHandler.GetInstance();
         public event PropertyChangedEventHandler PropertyChanged;
         private ICommand _addArticle;
@@ -69,7 +67,6 @@ namespace FluentPocket.ViewModels
             return ArticlesList;
         }
 
-
         public async Task SearchCommand(string q)
         {
             if (string.IsNullOrWhiteSpace(q)) return;
@@ -85,6 +82,7 @@ namespace FluentPocket.ViewModels
             OnPropertyChanged(nameof(SearchList));
             ListIsLoading = false;
         }
+
         internal ICommand AddArticle =>
             _addArticle ?? (_addArticle = new SimpleCommand(async param =>
             {
@@ -118,6 +116,7 @@ namespace FluentPocket.ViewModels
             request.Data.SetText(PocketHandler?.CurrentPocketItem?.Uri?.ToString() ?? "");
             request.Data.Properties.Title = "Shared by FluentPocket";
         }
+
         public async Task ToggleArchiveArticleAsync(PocketItem pocketItem, bool isArchive)
         {
             if (pocketItem == null) return;
@@ -140,6 +139,7 @@ namespace FluentPocket.ViewModels
             }
             catch (Exception e) { NotificationHandler.InAppNotification(e.Message, 2000); }
         }
+
         public async Task DeleteArticleAsync(PocketItem pocketItem)
         {
             if (pocketItem == null) return;
@@ -147,6 +147,7 @@ namespace FluentPocket.ViewModels
             CurrentList()?.Remove(pocketItem);
             NotificationHandler.InAppNotification("Deleted", 2000);
         }
+
         public async Task ToggleFavoriteArticleAsync(PocketItem pocketItem)
         {
             if (pocketItem == null) return;
@@ -173,6 +174,7 @@ namespace FluentPocket.ViewModels
         public void ItemRightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
         {
             var item = ((FrameworkElement)e.OriginalSource).DataContext as PocketItem;
+            PocketHandler.CurrentPocketItem = item;
             var flyout = new MenuFlyout();
             var el = new MenuFlyoutItem { Text = item.IsFavorite ? "Un-Favorite" : "Favorite", Icon = new SymbolIcon(item.IsFavorite ? Symbol.UnFavorite : Symbol.Favorite) };
             el.Click += async (sen, ee) =>
@@ -180,16 +182,19 @@ namespace FluentPocket.ViewModels
                 await ToggleFavoriteArticleAsync(item);
                 item.IsFavorite = !item.IsFavorite;
                 OnPropertyChanged(nameof(item));
+                RefreshArticles.Execute(item);
             };
             flyout?.Items?.Add(el);
             el = new MenuFlyoutItem { Text = "Share", Icon = new SymbolIcon(Symbol.Share) };
             el.Click += (sen, ee) =>
             {
-                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-                // dataTransferManager.DataRequested += new TypedEventHandler<DataTransferManager, DataRequestedEventArgs>(DataRequested(this.sender, _e, item));
-
+                DataTransferManager.GetForCurrentView().DataRequested += (s, args) =>
+                {
+                    var request = args.Request;
+                    request.Data.SetText(item?.Uri.AbsoluteUri.ToString() ?? "");
+                    request.Data.Properties.Title = "Shared by FluentPocket";
+                };
                 DataTransferManager.ShowShareUI();
-
             };
             flyout?.Items?.Add(el);
             el = new MenuFlyoutItem { Text = "Edit Tags", Icon = new SymbolIcon(Symbol.Edit) };
@@ -217,24 +222,24 @@ namespace FluentPocket.ViewModels
             };
             flyout?.Items?.Add(el);
             el = new MenuFlyoutItem { Text = "Delete", Icon = new SymbolIcon(Symbol.Delete) };
-            el.Click += async (sen, ee) => await DeleteArticleAsync(item);
+            el.Click += async (sen, ee) =>
+            {
+                await DeleteArticleAsync(item);
+                RefreshArticles.Execute(item);
+            };
             flyout?.Items?.Add(el);
             el = new MenuFlyoutItem
             {
-                Text = item?.IsArchive ?? false ? "Add" : "Archive",
-                Icon = new SymbolIcon(item?.IsArchive ?? false ? Symbol.Add : Symbol.Accept)
+                Text = !item.IsArchive ? "Archive" : "Un-Archive",
+                Icon = new FontIcon { Glyph = !item.IsArchive ? "\uE81C" : "\uE777" }
             };
-            el.Click += async (sen, ee) => await ToggleArchiveArticleAsync(item, item.IsArchive);
-            flyout?.Items?.Insert(0, el);
-            if (sender is StackPanel parent) flyout.ShowAt(parent, e.GetPosition(parent));
-        }
-
-        private void DataRequested(DataTransferManager sender, DataRequestedEventArgs e, PocketItem item)
-        {
-            DataRequest request = e.Request;
-            request.Data.Properties.Title = "FluentPocket Article";
-            request.Data.Properties.Description = "A FluentPocket Article";
-            request.Data.SetText(item?.Uri?.AbsoluteUri.ToString());
+            el.Click += async (sen, ee) =>
+            {
+                await ToggleArchiveArticleAsync(item, item.IsArchive);
+                RefreshArticles.Execute(item);
+            };
+                flyout?.Items?.Insert(0, el);
+            if (sender is Button parent) flyout.ShowAt(parent, e.GetPosition(parent));
         }
 
         internal ICommand RefreshArticles =>

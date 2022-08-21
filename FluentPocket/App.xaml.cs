@@ -21,7 +21,6 @@ namespace FluentPocket
             InitializeComponent();
             Suspending += OnSuspending;
             CacheManager.CacheManager.Init(typeof(App));
-            SettingsHandler.Load();
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)

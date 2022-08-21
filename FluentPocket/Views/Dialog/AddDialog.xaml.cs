@@ -21,9 +21,9 @@ namespace FluentPocket.Views.Dialog
             if (PrimaryBtnText != "Save") return;
             UrlTextBox.Visibility = Visibility.Collapsed;
             if (PocketHandler?.CurrentPocketItem?.Tags == null) return;
-            //foreach (var tag in PocketHandler.CurrentPocketItem.Tags) sl.Add(tag.Name);
+           // foreach (var tag in PocketHandler.CurrentPocketItem.Tags) sl.Add(tag.Name);
             ChipsList.SelectedChips = PocketHandler.CurrentPocketItem.Tags.Select(t => t.Name);
-            //Bindings.Update();
+            Bindings.Update();
         }
 
         public async void ContentDialog_PrimaryButtonClick(object sender, ContentDialogButtonClickEventArgs args)
