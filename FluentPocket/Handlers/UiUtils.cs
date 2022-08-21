@@ -26,7 +26,7 @@ namespace FluentPocket.Handlers
                 = titleBar.ForegroundColor
                     = titleBar.ButtonHoverForegroundColor
                         = titleBar.ButtonHoverForegroundColor
-                            = isDark ? Colors.WhiteSmoke : Colors.Black;
+                            = isDark ? Colors.White : Colors.Black;
         }
 
         public void ChangeHeaderTheme(string resourceKey, string hexColor)
