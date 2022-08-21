@@ -4,7 +4,8 @@ Based on https://github.com/yazdipour/pocketx, FluentPocket aims to be a very si
 There's no Reading View (when you click an item it'll open your default browser) and there are no settings (the UI follows the system theme).  
 The app has been updated to reflect the new Win 11 UI.  
  
- ![image](https://user-images.githubusercontent.com/94486376/185762873-2dceabe3-04f2-42a4-acaa-45faf4b9ffad.png)
+ ![image](https://user-images.githubusercontent.com/94486376/185783932-fe960913-98cd-40c7-b9f7-17116072e6ba.png)
+
 
 You can only:  
 -View and edit your Saved, Archived, Favorited items  
